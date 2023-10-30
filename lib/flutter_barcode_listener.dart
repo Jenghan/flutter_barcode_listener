@@ -149,9 +149,14 @@ class _BarcodeKeyboardListenerState extends State<BarcodeKeyboardListener> {
 
   @override
   void dispose() {
-    _keyboardSubscription.cancel();
-    _controller.close();
-    RawKeyboard.instance.removeListener(_keyBoardCallback);
-    super.dispose();
+    _cleanUpAsyncResources().then((_) {
+      RawKeyboard.instance.removeListener(_keyBoardCallback);
+      super.dispose();
+    });
+  }
+
+  Future<void> _cleanUpAsyncResources() async {
+    await _keyboardSubscription.cancel();
+    await _controller.close();
   }
 }
